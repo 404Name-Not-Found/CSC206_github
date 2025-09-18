@@ -1,0 +1,137 @@
+
+
+body{
+    background-image: url("/assets/images/bananabackground2.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+
+    font-family: "Comic Relief", system-ui;
+    font-weight: 400;
+    font-style: normal;
+}
+
+#header {
+    ul{
+        list-style: none;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    }
+    a{
+        text-decoration: none;
+        padding: 10px;
+    }
+    a:hover{
+        background-color: rgb(139, 128, 0, 0.5);
+        border-radius: 5px;
+        padding: 10px;
+    }
+}
+
+#content{
+    background-color: #FFE135;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px black solid;
+    border-radius: 10px;
+
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-top: 10px;
+
+    img {
+        width: 500px;
+        height: 500px;
+        margin-left: auto;
+        padding: 20px;
+    }
+}
+
+ .text {
+     width: 100%;
+     height: 100%;
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     justify-content: flex-start;
+     margin: 0;
+     padding: 0;
+
+     position: relative;
+     bottom: 20px;
+
+     h1 {
+         padding: 10px;
+         margin: 0;
+     }
+
+     h2 {
+         padding: 20px;
+         margin: 0;
+     }
+
+     p {
+         padding: 10px;
+         margin: 0;
+     }
+
+     table {
+         position: relative;
+         border: 1px solid black;
+         header {
+             text-decoration-color: black;
+         }
+
+         padding: 10px;
+     }
+ }
+
+a:hover {
+    cursor: pointer;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 300;
+    color: #555;
+}
+
+h2{
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #555;
+}
+
+ul{
+    margin: 0;
+}
+
+p{
+    margin: 0.5rem;
+    padding: 0;
+
+    font-family: "Happy Monkey", system-ui;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.ban2 {
+    text-align: center;
+    font-size: 200px;
+    a{
+        position: relative;
+        top: 200px;
+        font-size: 3rem;
+        text-decoration: none;
+    }
+    a:hover{
+        background-color: rgb(139, 128, 0, 0.5);
+        border-radius: 5px;
+        padding: 10px;
+    }
+}
+
