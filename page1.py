@@ -1,13 +1,14 @@
-header = '''
+from jinja2 import Template
+header = Template("""
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1"
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    <!-- Link to Bulma -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+    
 </head>
 
 <!-- I found the hero element allows me to make banner that I can center for the login information-->
@@ -38,9 +39,6 @@ header = '''
                   <a class="button is-medium is-fullwidth" href="/home">Login</a>
                   
                 </form>
-'''
-
-footer = '''
             </div>
           </div>
         </div>
@@ -50,4 +48,4 @@ footer = '''
         <p>2025 Ben Schuck</p>
     </footer>
 </section>
-'''
+""")

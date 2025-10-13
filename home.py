@@ -1,14 +1,12 @@
-header = '''
+from jinja2 import Template
+header = Template("""
 <!DOCTYPE html>
 <html lang="en">
 <head>
     
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-            
-    <title>Cars</title>   
-         
-    <!-- Link to Bulma -->
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
     
 </head>
@@ -33,9 +31,6 @@ header = '''
         
     </div>
 </nav>
-'''
-
-content = '''
 
 <!-- Just for setting the background color of the page -->
 <body class="has-background-info"></body>
@@ -89,10 +84,7 @@ content = '''
     </div>
 </div>
 
-'''
-
-footer = '''
 <footer class="footer">
     <p>2025 Ben Schuck</p>
 </footer>
-'''
+""")
