@@ -11,7 +11,6 @@ header = Template("""
     
 </head>
 
-<!-- Basic nav bar -->
 <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-menu m-4">
     
@@ -32,58 +31,10 @@ header = Template("""
     </div>
 </nav>
 
-<!-- Just for setting the background color of the page -->
 <body class="has-background-info"></body>
 
-<!-- The columns that present the car information in boxes -->
-<div class="columns m-5">
-
-    <div class="colum p-4">
-        <div class="box">
-            <figure class"image is-128x128">
-                <img src="/static/images/simplecar.jpg">
-            </figure>
-            <div class="media-content">
-                <p>
-                    <p class="is-size-3"><strong>Car 1</strong></p>
-                    <br>
-                    Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-                </p>
-            </div>
-        </div>
-    </div>
+ <main class="content site-content">{{ content }}</main>
     
-    <div class="colum p-4">
-        <div class="box">
-            <figure class"image is-128x128">
-                <img src="/static/images/simplecar.jpg">
-            </figure>
-            <div class="media-content">
-                <p>
-                    <p class="is-size-3"><strong>Car 2</strong></p>
-                    <br>
-                    Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-                </p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="colum p-4">
-        <div class="box">
-             <figure class"image is-128x128">
-                <img src="/static/images/simplecar.jpg">
-            </figure>
-            <div class="media-content">
-                <p>
-                    <p class="is-size-3"><strong>Car 3</strong></p>
-                    <br>
-                    Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
-
 <footer class="footer">
     <p>2025 Ben Schuck</p>
 </footer>
