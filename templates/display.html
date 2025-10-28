@@ -1,20 +1,17 @@
-from jinja2 import Template
-display = Template("""
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-</head>
+{% extends "base.html" %}
 
-<body>
+{% block title %}Vehicles{% endblock %}
+
+{% block body %}
+
 <div class="columns m-5 is-multiline">
     {% for car in all_cars %}
 
-<!-- The columns that present the car information in boxes -->
+    <!-- The columns that present the car information in boxes -->
     <div class="column p-4 is-one-third">
         <div class="box">
             <figure class="image is-200x200">
-                <img src="/static/images/simplecar.jpg">
+                <img src="/images/simplecar.jpg" alt="car">
             </figure>
             <div class="media-content">
                 <p class="is-size-3 mb-1"><strong>{{ car.Model }}</strong></p>
@@ -29,7 +26,5 @@ display = Template("""
 
     {% endfor %}
 </div>
-</body>
 
-<html>
-""")
+{% endblock %}
