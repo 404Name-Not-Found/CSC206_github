@@ -12,14 +12,15 @@ class vehicleSQL():
                 ON 
                     v.manufacturerID = m.manufacturerID
                 ORDER BY 
-                    m.manufacturer_name, v.model_name;'''
+                    m.manufacturer_name, v.model_name'''
 
         return sql
 
     # Selects the distinct manufacturer names
     def vehicle_names(self):
         sql = '''Select DISTINCT 
-                    m.manufacturer_name
+                    m.manufacturer_name,
+                    m.manufacturerID
                 FROM
                     vehicles
                 inner join 
@@ -32,7 +33,8 @@ class vehicleSQL():
     # Selects the distinct vehicle types
     def vehicle_type(self):
         sql = '''Select DISTINCT 
-                    m.vehicle_type_name
+                    m.vehicle_type_name,
+                    m.vehicle_typeID
                 from 
                     vehicles
                 inner join 
@@ -43,12 +45,14 @@ class vehicleSQL():
         return sql
 
     # Selects model names
-    def vehicle_model(self):
-        sql = '''Select      
-                    model_name
+    def vehicle_years(self):
+        sql = '''Select DISTINCT
+                    model_year
                 from 
-                    vehicles'''
-
+                    vehicles
+                ORDER BY
+                    model_year
+                '''
         return sql
 
     # Selects fuel type
@@ -63,7 +67,8 @@ class vehicleSQL():
     # Select distinct colors
     def colors(self):
         sql = '''SELECT DISTINCT
-                    c.color_name
+                    c.color_name,
+                    c.colorID
                 FROM
                     vehicles
                 INNER JOIN 
@@ -78,79 +83,9 @@ class vehicleSQL():
 
         return sql
 
-    # Based on example from template for dynamic routing
-    # All the _by_ are used for the displaying of vehicles after you apply a filter
-    def vehicles_by_manufacturer(self, manufacturer_name):
-        # For how to make a CTE
-        # https://hightouch.com/sql-dictionary/sql-common-table-expression-cte
-        # The first CTE concatenates the colors and then displays them in alphabetical order
-        # The second CTE calculates the total cost of parts for a vehicle
-        sql = f'''
-            WITH VehicleColorList AS (
-                SELECT
-                    vc.vehicleID,
-                    GROUP_CONCAT(c.color_name ORDER BY c.color_name ASC SEPARATOR ', ') AS concatenated_colors
-                FROM
-                    csc206cars.vehiclecolors vc
-                INNER JOIN
-                    csc206cars.colors c 
-                ON 
-                    vc.colorID = c.colorID
-                GROUP BY
-                    vc.vehicleID
-            ),
-            VehiclePartsCost AS (
-                SELECT
-                    po.vehicleID,
-                    SUM(p.cost) AS total_cost
-                FROM
-                    csc206cars.partorders po
-                INNER JOIN
-                    csc206cars.parts p 
-                ON 
-                    po.part_orderID = p.part_orderID
-                GROUP BY
-                    po.vehicleID
-            )
-            SELECT
-                v.*,
-                vcl.concatenated_colors,
-                vtn.vehicle_type_name,
-                m.manufacturer_name,
-                pt.purchase_price,
-                vpc.total_cost
-            FROM
-                csc206cars.vehicles v
-            LEFT JOIN
-                csc206cars.manufacturers m 
-            ON 
-                v.manufacturerID = m.manufacturerID
-            LEFT JOIN
-                csc206cars.vehicletypes vtn 
-            ON 
-                v.vehicle_typeID = vtn.vehicle_typeID
-            LEFT JOIN
-                csc206cars.purchasetransactions pt 
-            ON 
-                v.vehicleID = pt.vehicleID
-            LEFT JOIN
-                VehiclePartsCost vpc 
-            ON 
-                v.vehicleID = vpc.vehicleID 
-            LEFT JOIN
-                VehicleColorList vcl 
-            ON 
-                v.vehicleID = vcl.vehicleID 
-            WHERE
-                m.manufacturer_name = '{manufacturer_name}'
-            ORDER BY
-                v.model_year DESC,
-                m.manufacturer_name ASC;
-            '''
-        return sql
-
-    def sellable_vehicles(self):
-        sql = '''
+    # Query figured out with ezra
+    def sellable_vehicles(self, filters: dict | None = None):
+        sql_base = '''
             SELECT
                 v.*,
                 vcl.concatenated_colors,
@@ -204,227 +139,57 @@ class vehicleSQL():
                 ) AS vcl
             ON
                 v.vehicleID = vcl.vehicleID
-            WHERE
-                v.vehicleID NOT IN (SELECT vehicleID FROM csc206cars.salestransactions)
-                AND
-                v.vehicleID NOT IN (
-                    SELECT DISTINCT
-                        po.vehicleID
-                    FROM
-                        csc206cars.partorders po
-                    INNER JOIN
-                        csc206cars.parts p on po.part_orderID = p.part_orderID
-                    WHERE
-                        p.status != 'Installed'
+        '''
+
+        where_conditions = [
+            "v.vehicleID NOT IN (SELECT vehicleID FROM csc206cars.salestransactions)",
+            '''v.vehicleID NOT IN (
+                SELECT DISTINCT po.vehicleID
+                FROM csc206cars.partorders po
+                INNER JOIN csc206cars.parts p on po.part_orderID = p.part_orderID
+                WHERE p.status != 'Installed'
+            )'''
+        ]
+
+        if filters:
+            if 'manID' in filters:
+                where_conditions.append(f"v.manufacturerID = {filters['manID']}")
+
+            if 'vehicletypeID' in filters:
+                where_conditions.append(f"v.vehicle_typeID = {filters['vehicletypeID']}")
+
+            if 'modelname' in filters:
+                where_conditions.append(f"v.model_name = '{filters['modelname']}'")
+
+            if 'fueltype' in filters:
+                where_conditions.append(f"v.fuel_type = '{filters['fueltype']}'")
+
+            color_condition = None
+            if 'colorid' in filters:
+                color_condition = f"vc.colorID = {filters['colorid']}"
+            elif 'colorname' in filters:
+                color_condition = f"c.color_name = '{filters['colorname']}'"
+
+            if color_condition:
+                color_exists_clause = f'''
+                EXISTS (
+                    SELECT 1
+                    FROM csc206cars.vehiclecolors vc
+                    INNER JOIN csc206cars.colors c ON vc.colorID = c.colorID
+                    WHERE vc.vehicleID = v.vehicleID AND {color_condition}
                 )
+                '''
+                where_conditions.append(color_exists_clause)
+
+        where_clause = "WHERE\n" + "\nAND ".join(where_conditions)
+
+        sql = f'''
+            {sql_base}
+            {where_clause}
             ORDER BY
-                v.model_year DESC,
+                v.model_name DESC,
                 m.manufacturer_name ASC
-            '''
-        return sql
-
-
-    def vehicle_by_type(self, vehicle_type_name):
-        sql = f'''
-            WITH VehiclePartsCost AS (
-                SELECT
-                    po.vehicleID,
-                    SUM(p.cost) AS total_cost
-                FROM
-                    csc206cars.partorders po
-                INNER JOIN
-                    csc206cars.parts p 
-                ON 
-                    po.part_orderID = p.part_orderID
-                GROUP BY
-                    po.vehicleID
-            )
-            SELECT 
-                    v.*, 
-                    v.description,
-                    m.manufacturer_name,
-                    vtn.vehicle_type_name,
-                    pt.purchase_price,
-                    vpc.total_cost
-                FROM
-                    vehicles v
-                LEFT JOIN 
-                    csc206cars.vehicletypes vtn 
-                ON
-                    v.vehicle_typeID = vtn.vehicle_typeID
-                LEFT JOIN
-                    csc206cars.manufacturers m
-                ON 
-                    v.manufacturerID = m.manufacturerID
-                LEFT JOIN
-                    csc206cars.purchasetransactions pt
-                ON
-                    v.vehicleID = pt.vehicleID
-                LEFT JOIN
-                    VehiclePartsCost vpc 
-                ON 
-                    v.vehicleID = vpc.vehicleID 
-                WHERE
-                    vtn.vehicle_type_name = '{vehicle_type_name}'
-                ORDER BY
-                    v.model_year DESC,
-                    m.manufacturer_name ASC;
-                '''
-        return sql
-
-    def vehicle_by_model(self, model_by_name):
-        sql = f'''
-            WITH VehiclePartsCost AS (
-                SELECT
-                    po.vehicleID,
-                    SUM(p.cost) AS total_cost
-                FROM
-                    csc206cars.partorders po
-                INNER JOIN
-                    csc206cars.parts p 
-                ON 
-                    po.part_orderID = p.part_orderID
-                GROUP BY
-                    po.vehicleID
-            )
-            SELECT
-                v.vin,
-                v.description,
-                v.model_year,
-                m.manufacturer_name,
-                vtn.vehicle_type_name,
-                v.model_name,
-                pt.purchase_price,
-                vpc.total_cost
-            FROM
-                vehicles v
-            LEFT JOIN 
-                csc206cars.manufacturers m
-            ON  
-                v.manufacturerID = m.manufacturerID
-            LEFT JOIN
-                csc206cars.vehicletypes vtn
-            ON  
-                v.vehicle_typeID = vtn.vehicle_typeID
-            LEFT JOIN
-                csc206cars.purchasetransactions pt
-            ON
-                v.vehicleID = pt.vehicleID
-            LEFT JOIN
-                VehiclePartsCost vpc 
-            ON 
-                v.vehicleID = vpc.vehicleID 
-            WHERE 
-                model_name = '{model_by_name}'
-            ORDER BY
-                v.model_year DESC,
-                m.manufacturer_name ASC;   
-                '''
-        return sql
-
-    def vehicle_by_fuel(self, fuel_by_type):
-        sql = f'''
-            WITH VehiclePartsCost AS (
-                SELECT
-                    po.vehicleID,
-                    SUM(p.cost) AS total_cost
-                FROM
-                    csc206cars.partorders po
-                INNER JOIN
-                    csc206cars.parts p 
-                ON 
-                    po.part_orderID = p.part_orderID
-                GROUP BY
-                    po.vehicleID
-            )
-            SELECT 
-                    v.fuel_type,
-                    v.vin,
-                    v.model_year,
-                    v.description,
-                    m.manufacturer_name,
-                    vtn.vehicle_type_name,
-                    v.model_name,
-                    pt.purchase_price,
-                    vpc.total_cost
-                FROM
-                    vehicles v
-                LEFT JOIN
-                    csc206cars.manufacturers m 
-                ON
-                    v.manufacturerID = m.manufacturerID
-                LEFT JOIN
-                    csc206cars.vehicletypes vtn
-                ON 
-                    v.vehicle_typeID = vtn.vehicle_typeID   
-                LEFT JOIN
-                    csc206cars.purchasetransactions pt
-                ON
-                    v.vehicleID = pt.vehicleID
-                LEFT JOIN
-                    VehiclePartsCost vpc 
-                ON 
-                    v.vehicleID = vpc.vehicleID 
-                WHERE 
-                    fuel_type = '{fuel_by_type}'
-                ORDER BY
-                    v.model_year DESC,
-                    m.manufacturer_name ASC;   
-                    '''
-
-        return sql
-
-    def vehicle_by_color(self, color_name):
-        sql = f'''
-            WITH VehiclePartsCost AS (
-                SELECT
-                    po.vehicleID,
-                    SUM(p.cost) AS total_cost
-                FROM
-                    csc206cars.partorders po
-                INNER JOIN
-                    csc206cars.parts p 
-                ON 
-                    po.part_orderID = p.part_orderID
-                GROUP BY
-                    po.vehicleID
-            )
-            SELECT
-                     v.*,
-                     c.color_name,
-                    pt.purchase_price,
-                    vpc.total_cost,
-                    m.manufacturer_name
-                    
-                FROM
-                    csc206cars.vehicles v
-                LEFT JOIN 
-                    csc206cars.manufacturers m
-                ON
-                    v.manufacturerID = m.manufacturerID
-                LEFT JOIN 
-                    csc206cars.vehiclecolors vc
-                ON 
-                    v.vehicleID = vc.vehicleID
-                LEFT JOIN
-                    csc206cars.colors c
-                ON
-                    vc.colorID = c.colorID
-                LEFT JOIN
-                    csc206cars.purchasetransactions pt
-                ON
-                    v.vehicleID = pt.vehicleID
-                LEFT JOIN
-                    VehiclePartsCost vpc 
-                ON 
-                    v.vehicleID = vpc.vehicleID 
-                WHERE 
-                    c.color_name = '{color_name}'
-                ORDER BY
-                    v.model_year DESC,
-                    m.manufacturer_name ASC;   
-                 '''
-
+        '''
         return sql
 
     # 3 Queries below done with help of ma boi
