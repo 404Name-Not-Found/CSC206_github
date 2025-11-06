@@ -1,28 +1,5 @@
 class vehicleSQL():
 
-    def sellable_vehicles(self):
-        sql = '''
-            SELECT 
-                v.*,
-                m.manufacturer_name
-                
-            FROM 
-                vehicles v
-            LEFT JOIN 
-                csc206cars.manufacturers m
-            ON 
-                v.manufacturerID = m.manufacturerID
-            WHERE    
-                v.vehicleID NOT IN (SELECT vehicleID FROM salestransactions)
-                AND v.vehicleID NOT IN (
-                SELECT DISTINCT vehicleID
-                FROM partorders po
-                INNER JOIN parts p on po.part_orderID = p.part_orderID
-                WHERE p.status != 'Installed')
-            '''
-
-        return sql
-
     # Allows display of model and manufacturer
     def all_vehicles(self):
         sql = '''SELECT
@@ -171,6 +148,81 @@ class vehicleSQL():
                 m.manufacturer_name ASC;
             '''
         return sql
+
+    def sellable_vehicles(self):
+        sql = '''
+            SELECT
+                v.*,
+                vcl.concatenated_colors,
+                vtn.vehicle_type_name,
+                m.manufacturer_name,
+                COALESCE(pt.purchase_price, 0.00) AS purchase_price, 
+                COALESCE(vpc.total_cost, 0.00) AS total_cost        
+            FROM
+                csc206cars.vehicles v
+            LEFT JOIN
+                csc206cars.manufacturers m
+            ON
+                v.manufacturerID = m.manufacturerID
+            LEFT JOIN
+                csc206cars.vehicletypes vtn
+            ON
+                v.vehicle_typeID = vtn.vehicle_typeID
+            LEFT JOIN
+                csc206cars.purchasetransactions pt
+            ON
+                v.vehicleID = pt.vehicleID
+            LEFT JOIN
+                (
+                    SELECT
+                        po.vehicleID,
+                        SUM(p.cost) AS total_cost
+                    FROM
+                        csc206cars.partorders po
+                    INNER JOIN
+                        csc206cars.parts p
+                    ON
+                        po.part_orderID = p.part_orderID
+                    GROUP BY
+                        po.vehicleID
+                ) AS vpc
+            ON
+                v.vehicleID = vpc.vehicleID
+            LEFT JOIN
+                (
+                    SELECT
+                        vc.vehicleID,
+                        GROUP_CONCAT(c.color_name ORDER BY c.color_name ASC SEPARATOR ', ') AS concatenated_colors
+                    FROM
+                        csc206cars.vehiclecolors vc
+                    INNER JOIN
+                        csc206cars.colors c
+                    ON
+                        vc.colorID = c.colorID
+                    GROUP BY
+                        vc.vehicleID
+                ) AS vcl
+            ON
+                v.vehicleID = vcl.vehicleID
+            WHERE
+                v.vehicleID NOT IN (SELECT vehicleID FROM csc206cars.salestransactions)
+                AND
+                v.vehicleID NOT IN (
+                    SELECT DISTINCT
+                        po.vehicleID
+                    FROM
+                        csc206cars.partorders po
+                    INNER JOIN
+                        csc206cars.parts p on po.part_orderID = p.part_orderID
+                    WHERE
+                        p.status != 'Installed'
+                )
+            ORDER BY
+                v.model_year DESC,
+                m.manufacturer_name ASC
+            '''
+        return sql
+
 
     def vehicle_by_type(self, vehicle_type_name):
         sql = f'''

@@ -45,7 +45,7 @@ def home():
     qSQL = cars.vehicleSQL()
     output = db.query(qSQL.sellable_vehicles())
 
-    return render_template('display.html', cars=car_query, c=output, include_filters=True)
+    return render_template('display.html', cars=car_query, vehicles=output, include_filters=True)
 
 
 @app.route('/vehicle_type/<vehicle_type_name>')
