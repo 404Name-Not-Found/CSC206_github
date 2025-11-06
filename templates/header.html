@@ -1,12 +1,25 @@
 <nav class="navbar" role="navigation" aria-label="main navigation">
-    <div class="navbar-menu m-4 has-text-left">
+    <div class="navbar-menu m-4 has-text-left is-flex is-align-items-center">
 
-        <!-- Heading -->
-        <div class="navbar-start">
-            <p class="is-size-3">Ben's Automobiles</p>
+        <div class="navbar-start is-flex is-align-items-center">
+            <a href="/home" class="navbar-item is-size-4 has-text-weight-bold has-text-info">Ben's Automobiles</a>
+            <div class="dropdown">
+                <div class="dropdown-trigger">
+                    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu1">
+                        <span>Reports</span>
+                        <span class="arrow" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="dropdown-menu" id="dropdown-menu1" role="menu">
+                    <div class="dropdown-content">
+                        <a href="/sales" class="dropdown-item">Sales Productivity</a>
+                        <a href="/seller" class="dropdown-item">Seller History</a>
+                        <a href="/statistics" class="dropdown-item">Part Statistics</a>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Sign In Button -->
         <div class="navbar-end">
             <div class="navbar-item">
                 <div class="buttons is-centered">
@@ -14,6 +27,5 @@
                 </div>
             </div>
         </div>
-
     </div>
 </nav>

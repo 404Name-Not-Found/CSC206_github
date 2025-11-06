@@ -1,0 +1,23 @@
+/* The arrow on the drop down box */
+.arrow {
+    display: inline-block;
+    width: 0.5em;
+    height: 0.5em;
+    border-right: 1px solid currentColor;
+    border-bottom: 1px solid currentColor;
+
+    transform: rotate(45deg);
+    margin-left: 0.5em;
+    transition: transform 0.2s ease;
+}
+
+/* Flip the direction of the arrow when the dropdown menu is open. */
+.dropdown.is-active .arrow {
+    transform: rotate(225deg);
+}
+
+/* Prevent the drop down from being too long */
+.dropdown-menu .dropdown-content {
+    max-height: 200px;
+    overflow-y: auto;
+}

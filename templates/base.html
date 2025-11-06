@@ -6,25 +6,39 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <title>{% block title %}Cars{% endblock title %}</title>
+
+    <!-- Bulma Link -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdown.css') }}">
 
 </head>
 
 <body class="has-background-info">
-    <section class="section">
-        <div>
-            {% include "header.html" %}
-        </div>
-    </section>
 
-    <section>
-        {% block body %}
+<section class="section">
+    <div class="box pt-1 pb-1">
+        {% include "header.html" %}
+        {% if include_filters==True %}
+        <hr>
+        {% include "filters.html" %}
+        {% endif %}
 
-        {% endblock %}
-    </section>
+    </div>
+</section>
 
-    <section>
-        {% include "footer.html" %}
-    </section>
+<section>
+    {% block body %}
+
+    {% endblock %}
+</section>
+
+<section>
+    {% include "footer.html" %}
+</section>
+
+<script src="{{ url_for('static', filename='js/dropdown.js') }}"></script>
 
 </body>
+</html>

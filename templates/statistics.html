@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Reports{% endblock %}
+
+{% block body %}
+
+<h1 class="title is-2 has-text-centered">Part Statistics Report</h1>
+
+<div class="container">
+    {% for p in info %}
+    <div class="box">
+        <article class="media">
+            <div class="media-content">
+                <div class="content">
+                    <p>
+                        <strong class="is-size-5">{{ p.vendor_name }}</strong>
+                        <br>
+                        <small>Parts Purchased:</small> <strong>{{ p.parts_purchased }}</strong>
+                        <br>
+                        <small>Total Parts Cost:</small> <strong>${{ p.total_parts }}</strong>
+                        <br>
+                        <small>Avg. Cost Per Part:</small>
+                        {% if p.avg_cost_per_part %}
+                        ${{ p.avg_cost_per_part | round(2, 'floor') | string }}
+                        {% else %}
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </article>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,98 @@
+<div class="container is-flex m-10 is-justify-content-flex-start is-align-items-center">
+    <h3 class="is-size-2 mr-5">Filters:</h3>
+    <form method="get" action="{{ url_for('home') }}" style="flex-grow: 1;">
+        <div class="is-flex is-justify-content-flex-start is-align-items-center">
+            <div class="dropdown mr-4">
+                <div class="dropdown-trigger">
+                    <button type="button" class="button" aria-haspopup="true" aria-controls="dropdown-menu1">
+                        <span>Manufacturers</span>
+                        <span class="arrow" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="dropdown-menu" id="dropdown-menu1" role="menu">
+                    <div class="dropdown-content">
+                        {% for car in cars.manufacturer %}
+                        <a href="/manufacturers/{{ car.manufacturer_name }}" class="dropdown-item">
+                            {{ car.manufacturer_name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="dropdown mr-4">
+                <div class="dropdown-trigger">
+                    <button type="button" class="button" aria-haspopup="true" aria-controls="dropdown-menu2">
+                        <span>Vehicle Type</span>
+                        <span class="arrow" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+                    <div class="dropdown-content">
+                        {% for car in cars.vehicle_types %}
+                        <a href="/vehicle_type/{{ car.vehicle_type_name }}" class="dropdown-item">
+                            {{ car.vehicle_type_name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="dropdown mr-4">
+                <div class="dropdown-trigger">
+                    <button type="button" class="button" aria-haspopup="true" aria-controls="dropdown-menu3">
+                        <span>Model Name</span>
+                        <span class="arrow" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+                    <div class="dropdown-content">
+                        {% for car in cars.vehicle_models %}
+                        <a href="/model_name/{{ car.model_name }}" class="dropdown-item">
+                            {{ car.model_name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="dropdown mr-4">
+                <div class="dropdown-trigger">
+                    <button type="button" class="button" aria-haspopup="true" aria-controls="dropdown-menu4">
+                        <span>Fuel Type</span>
+                        <span class="arrow" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="dropdown-menu" id="dropdown-menu4" role="menu">
+                    <div class="dropdown-content">
+                        {% for car in cars.fuel_types %}
+                        <a href="/fuel_type/{{ car.fuel_type }}" class="dropdown-item">
+                            {{ car.fuel_type }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="dropdown mr-4">
+                <div class="dropdown-trigger">
+                    <button type="button" class="button" aria-haspopup="true" aria-controls="dropdown-menu5">
+                        <span>Color</span>
+                        <span class="arrow" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="dropdown-menu" id="dropdown-menu5" role="menu">
+                    <div class="dropdown-content">
+                        {% for car in cars.colors %}
+                        <a href="/colors/{{ car.color_name }}" class="dropdown-item">
+                            {{ car.color_name}}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="button is-medium is-primary ml-auto">Submit</button>
+        </div>
+    </form>
+</div>

@@ -4,20 +4,23 @@
 
 {% block body %}
 
+<h1 class="title is-2 has-text-centered mb-5">Sellable Vehicles</h1>
+
 <div class="columns m-5 is-multiline">
-    {% for car in all_cars %}
+
+    <!-- Loop through the various queries -->
+    {% for car in c %}
 
     <!-- The columns that present the car information in boxes -->
     <div class="column p-4 is-one-third">
         <div class="box">
             <figure class="image is-200x200">
-                <img src="/images/simplecar.jpg" alt="car">
+                <img src="{{ url_for('static', filename='images/simplecar.jpg') }}" alt="car">
             </figure>
             <div class="media-content">
-                <p class="is-size-3 mb-1"><strong>{{ car.Model }}</strong></p>
+                <p class="is-size-3 mb-1">
+                    {{ car.manufacturer_name }} - {{ car.model_name }}</p>
                 <p class="is-size-5 mb-1">
-                    {{ car.Year }} - {{ car.Make }}<br>
-                    {{ car.Color }}<br>
                 </p>
                 <br>
             </div>
@@ -26,5 +29,6 @@
 
     {% endfor %}
 </div>
+
 
 {% endblock %}
